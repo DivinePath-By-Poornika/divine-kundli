@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Divine Path - Astrology Kundli with Detailed Analysis</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background: #000000;
+  color: #f4d03f;
+  min-height: 100vh;
+  padding: 20px;
+  user-select:none;
+}
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+h1 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 2.8rem;
+  color: #f4d03f;
+  text-shadow: 0 0 15px #f4d03faa;
+}
+h2.section-title {
+  margin-bottom: 10px;
+  color: #f4d03f;
+  text-shadow: 0 0 10px #dab51fbb;
+}
+form {
+  max-width: 600px;
+  margin: 0 auto 30px auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 12px;
+  align-items: center;
+  justify-content: center;
+}
+label {
+  flex: 1 100%;
+  font-weight: 600;
+  color: #f4d03fdd;
+}
+select, input[type=date], input[type=time] {
+  background: #1a1a1a;
+  border: 2px solid #f4d03faa;
+  color: #f4d03f;
+  padding: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  font-size: 1rem;
+  min-width: 120px;
+}
+button {
+  background: #f4d03f;
+  border: none;
+  color: #090900;
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 12px 28px;
+  border-radius: 24px;
+  cursor: pointer;
+  box-shadow: 0 0 20px #f4d03fdd;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background: #dab51f;
+  box-shadow: 0 0 30px #dab51fff;
+}
+#kundli-container {
+  max-width: 720px;
+  margin: 0 auto 30px auto;
+  background: #111111cc;
+  border-radius: 20px;
+  box-shadow: 0 0 30px #f4d03faa;
+  padding: 20px;
+  user-select:none;
+}
+#kundli-svg {
+  display: block;
+  margin: 0 auto 20px auto;
+  max-width: 600px;
+  width: 100%;
+  height: 600px;
+}
+.planet-circle {
+  cursor: pointer;
+  transition: transform 0.3s ease, fill 0.3s ease;
+}
+.planet-circle:hover {
+  fill: #ffff00;
+  transform: scale(1.3);
+}
+.house-box {
+  fill: none;
+  stroke: #f4d03fbb;
+  stroke-width: 2;
+}
+.house-label {
+  fill: #f4d03fdd;
+  font-size: 18px;
+  font-weight: 700;
+  text-anchor: middle;
+  user-select:none;
+  text-shadow: 0 0 10px #dab51fbb;
+}
+.planet-label {
+  font-weight: 700;
+  fill: #f4d03fdd;
+  font-size: 14px;
+  user-select:none;
+  pointer-events:none;
+  text-shadow: 0 0 8px #dab51fbb;
+}
+#analysis {
+  max-width: 720px;
+  margin: 0 auto 40px auto;
+  background: #111111cc;
+  border-radius: 20px;
+  box-shadow: 0 0 26px #dab51fcc;
+  padding: 20px;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  white-space: pre-line;
+  user-select:none;
+  color: #faf1a9;
+}
+#download-btn {
+  display: block;
+  margin: 0 auto 50px auto;
+  background: #f4d03f;
+  color: #090900;
+  border-radius: 24px;
+  padding: 14px 36px;
+  font-weight: 900;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 0 25px #f4d03fdd;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+#download-btn:hover {
+  background-color: #dab51f;
+  box-shadow: 0 0 40px #dab51fff;
+}
+/* Tooltip style for planets */
+.tooltip {
+  position: absolute;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #f4d03fdd;
+  color: #222;
+  font-weight: 700;
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Divine Path Astrology</h1>
+  <p class="subtitle">North Indian Kundli with Detailed Analysis &amp; Download Option</p>
+</header>
+
+<form id="input-form" aria-label="Kundli input form" spellcheck="false" autocomplete="off">
+  <label for="city-select">Select City:</label>
+  <select id="city-select" name="city-select" required aria-required="true" aria-describedby="city-desc">
+    <option value="" disabled selected>-- Select a city --</option>
+  </select>
+
+  <label for="dob">Date of Birth:</label>
+  <input type="date" id="dob" name="dob" required aria-required="true"/>
+
+  <label for="time-of-birth">Time of Birth:</label>
+  <input type="time" id="time-of-birth" name="time-of-birth" step="60" value="12:00" required aria-required="true"/>
+
+  <button type="submit">Calculate Kundli</button>
+</form>
+
+<div id="kundli-container" aria-live="polite" aria-atomic="true" tabindex="0" role="region" aria-label="Kundli chart and analysis container" style="display:none;">
+  <svg id="kundli-svg" role="img" aria-label="North Indian Kundli chart"></svg>
+  <pre id="analysis"></pre>
+  <button id="download-btn">Download Kundli &amp; Analysis as PNG</button>
+</div>
+
+<div class="tooltip" id="planet-tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" ></script>
+<script>
+/* Major Indian cities with lat-lon (state capitals + 50 major) */
+const cities = [
+  { name: "Delhi", lat: 28.7041, lon: 77.1025 },
+  { name: "Mumbai", lat: 19.076, lon: 72.8777 },
+  { name: "Kolkata", lat: 22.5726, lon: 88.3639 },
+  { name: "Chennai", lat: 13.0827, lon: 80.2707 },
+  { name: "Bengaluru", lat: 12.9716, lon: 77.5946 },
+  { name: "Hyderabad", lat: 17.385, lon: 78.4867 },
+  { name: "Ahmedabad", lat: 23.0225, lon: 72.5714 },
+  { name: "Pune", lat: 18.5204, lon: 73.8567 },
+  { name: "Jaipur", lat: 26.9124, lon: 75.7873 },
+  { name: "Lucknow", lat: 26.8467, lon: 80.9462 },
+  { name: "Kanpur", lat: 26.4499, lon: 80.3319 },
+  { name: "Nagpur", lat: 21.1458, lon: 79.0882 },
+  { name: "Indore", lat: 22.7196, lon: 75.8577 },
+  { name: "Thane", lat: 19.2183, lon: 72.9781 },
+  { name: "Bhopal", lat: 23.2599, lon: 77.4126 },
+  { name: "Visakhapatnam", lat: 17.6868, lon: 83.2185 },
+  { name: "Patna", lat: 25.5941, lon: 85.1376 },
+  { name: "Vadodara", lat: 22.3072, lon: 73.1812 },
+  { name: "Ghaziabad", lat: 28.6692, lon: 77.4538 },
+  { name: "Ludhiana", lat: 30.901, lon: 75.8573 },
+  { name: "Agra", lat: 27.1767, lon: 78.0081 },
+  { name: "Nashik", lat: 19.9975, lon: 73.7898 },
+  { name: "Faridabad", lat: 28.4089, lon: 77.3178 },
+  { name: "Meerut", lat: 28.9845, lon: 77.7064 },
+  { name: "Rajkot", lat: 22.3039, lon: 70.8022 },
+  { name: "Kalyan", lat: 19.2443, lon: 73.1300 },
+  { name: "Vasai-Virar", lat: 19.3917, lon: 72.8397 },
+  { name: "Varanasi", lat: 25.3176, lon: 82.9739 },
+  { name: "Srinagar", lat: 34.0837, lon: 74.7973 },
+  { name: "Aurangabad", lat: 19.8762, lon: 75.3433 },
+  { name: "Dhanbad", lat: 23.7957, lon: 86.4304 },
+  { name: "Amritsar", lat: 31.634, lon: 74.8723 },
+  { name: "Navi Mumbai", lat: 19.033, lon: 73.0297 },
+  { name: "Allahabad", lat: 25.4358, lon: 81.8463 },
+  { name: "Ranchi", lat: 23.3441, lon: 85.3096 },
+  { name: "Howrah", lat: 22.5958, lon: 88.2636 },
+  { name: "Coimbatore", lat: 11.0168, lon: 76.9558 },
+  { name: "Jabalpur", lat: 23.1815, lon: 79.9864 },
+  { name: "Gwalior", lat: 26.2183, lon: 78.1828 },
+  { name: "Vijayawada", lat: 16.5062, lon: 80.648 },
+  { name: "Jodhpur", lat: 26.2389, lon: 73.0243 },
+  { name: "Madurai", lat: 9.9252, lon: 78.1198 },
+  { name: "Raipur", lat: 21.2514, lon: 81.6296 },
+  { name: "Kota", lat: 25.2138, lon: 75.8648 },
+  { name: "Guwahati", lat: 26.1445, lon: 91.7362 },
+  { name: "Chandigarh", lat: 30.7333, lon: 76.7794 },
+  { name: "Solapur", lat: 17.6599, lon: 75.9064 },
+  { name: "Hubli", lat: 15.3647, lon: 75.1239 },
+  { name: "Bareilly", lat: 28.367, lon: 79.4304 },
+  { name: "Mysore", lat: 12.2958, lon: 76.6394 },
+  { name: "Tiruchirappalli", lat: 10.7905, lon: 78.7047 },
+  { name: "Bhubaneswar", lat: 20.2961, lon: 85.8245 },
+  { name: "Moradabad", lat: 28.8386, lon: 78.7744 }
+];
+
+const planetSymbols = {
+  Sun: 'Su',
+  Moon: 'Mo',
+  Mars: 'Ma',
+  Mercury: 'Me',
+  Jupiter: 'Ju',
+  Venus: 'Ve',
+  Saturn: 'Sa',
+  Rahu: 'Ra',
+  Ketu: 'Ke'
+};
+
+function createOption(value, text) {
+  const opt = document.createElement('option');
+  opt.value = value;
+  opt.textContent = text;
+  return opt;
+}
+const citySelect = document.getElementById('city-select');
+for (let c of cities) {
+  citySelect.appendChild(createOption(`${c.lat},${c.lon}`, c.name));
+}
+
+/* Astrology calculations and chart rendering here: */
+
+function toJulianDay(y, m, d, h, min) {
+  if (m <= 2) { y -= 1; m += 12; }
+  const A = Math.floor(y / 100);
+  const B = 2 - A + Math.floor(A / 4);
+  const dayFrac = (h + min / 60) / 24;
+  return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + dayFrac + B - 1524.5;
+}
+function degToRad(deg) { return deg * Math.PI / 180; }
+function radToDeg(rad) { return rad * 180 / Math.PI; }
+
+// Simplified planetary position formulas for client-side.
+// For highest accuracy, integrate Swiss Ephemeris or NASA data offline (complex).
+
+function sunLongitude(JD) {
+  const n = JD - 2451545.0;
+  const L = (280.460 + 0.9856474 * n) % 360;
+  const g = (357.528 + 0.9856003 * n) % 360;
+  const gRad = degToRad(g);
+  return (L + 1.915 * Math.sin(gRad) + 0.02 * Math.sin(2 * gRad) + 360) % 360;
+}
+function moonLongitude(JD) {
+  const n = JD - 2451550.1;
+  const L = (218.316 + 13.176396 * n) % 360;
+  const M = (134.963 + 13.064993 * n) % 360;
+  const F = (93.272 + 13.22935 * n) % 360;
+  const LRad = degToRad(L);
+  const MRad = degToRad(M);
+  const FRad = degToRad(F);
+  let lam = L
+    + 6.289 * Math.sin(MRad)
+    - 3.0 * Math.sin(LRad - degToRad(297.85))
+    + 1.274 * Math.sin(2 * degToRad(L) - MRad)
+    + 0.658 * Math.sin(2 * LRad)
+    + 0.214 * Math.sin(2 * MRad)
+    - 0.186 * Math.sin(degToRad(297.85))
+    + 0.114 * Math.sin(2 * FRad);
+  return (lam + 360) % 360;
+}
+function mercuryLongitude(JD) {
+  const n = JD - 2451545.0; return (252.25084 + 4.0923344368 * n) % 360;
+}
+function venusLongitude(JD) {
+  const n = JD - 2451545.0; return (181.9798 + 1.6021302244 * n) % 360;
+}
+function marsLongitude(JD) {
+  const n = JD - 2451545.0; return (355.433 + 0.5240207766 * n) % 360;
+}
+function jupiterLongitude(JD) {
+  const n = JD - 2451545.0; return (34.3515 + 0.083091 * n) % 360;
+}
+function saturnLongitude(JD) {
+  const n = JD - 2451545.0; return (50.07745 + 0.0300657 * n) % 360;
+}
+//... (additional helper functions here)
+
+function getPlanetPositions(JD) {
+  return [
+    { name: 'Sun', longitude: sunLongitude(JD) },
+    { name: 'Moon', longitude: moonLongitude(JD) },
+    { name: 'Mars', longitude: marsLongitude(JD) },
+    { name: 'Mercury', longitude: mercuryLongitude(JD) },
+    { name: 'Jupiter', longitude: jupiterLongitude(JD) },
+    { name: 'Venus', longitude: venusLongitude(JD) },
+    { name: 'Saturn', longitude: saturnLongitude(JD) },
+  ];
+}
+
+function calculateAscendant(JD, lat, lon) {
+  const GST = (function (JD) {
+    const JD0 = Math.floor(JD + 0.5) - 0.5;
+    const S = JD0 - 2451545.0;
+    const T = S / 36525.0;
+    const T0 = 6.697374558 + 2400.051336 * T + 0.000025862 * T * T;
+    const UT = (JD - JD0) * 24;
+    let GST = T0 + UT * 1.002737909;
+    GST = (GST % 24) * 15;
+    if (GST < 0) GST += 360;
+    return GST;
+  })(JD);
+  let LST = (GST + lon) % 360;
+  if (LST < 0) LST += 360;
+  const radLat = degToRad(lat);
+  const radLST = degToRad(LST);
+  const epsilon = degToRad(23.4393);
+  const asc = Math.atan2(
+    -Math.cos(radLST),
+    Math.sin(radLST) * Math.cos(epsilon) - Math.tan(radLat) * Math.sin(epsilon)
+  );
+  return (asc < 0 ? asc + 2 * Math.PI : asc) * 180 / Math.PI;
+}
+
+function longitudeToHouse(longitude, ascendant) {
+  let diff = longitude - ascendant;
+  if (diff < 0) diff += 360;
+  return Math.floor(diff / 30) + 1;
+}
+
+function createSVGElement(name) {
+  return document.createElementNS('http://www.w3.org/2000/svg', name);
+}
+
+function clearContainer(id) {
+  let el = document.getElementById(id);
+  el.innerHTML = '';
+  return el;
+}
+
+function drawKundli(planets, ascendant) {
+  const svg = clearContainer('kundli-svg');
+  // Draw diamond houses and place planets with their signs
+
+  // Draw diamond background
+  const diamond = createSVGElement('polygon');
+  diamond.setAttribute('points', '300,20 580,300 300,580 20,300');
+  diamond.setAttribute('stroke', '#f4d03f');
+  diamond.setAttribute('stroke-width', '3');
+  diamond.setAttribute('fill', 'none');
+  svg.appendChild(diamond);
+
+  // House centers coordinates (approximate)
+  const housePositions = [
+    [300, 110], [400, 185], [460, 300], [400, 415], [300, 500], [200, 415],
+    [140, 300], [200, 185], [300, 300], [370, 238], [300, 160], [230, 238]
+  ];
+
+  // Draw house numbers
+  for (let i = 0; i < 12; i++) {
+    const text = createSVGElement('text');
+    text.textContent = i + 1;
+    text.setAttribute('x', housePositions[i][0]);
+    text.setAttribute('y', housePositions[i][1] - 20);
+    text.setAttribute('fill', '#f4d03f');
+    text.setAttribute('font-size', '20');
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-weight', '700');
+    svg.appendChild(text);
+  }
+
+  // Place planets inside houses
+  const housePlanets = {};
+  for (let p of planets) {
+    const house = longitudeToHouse(p.longitude, ascendant);
+    if (!housePlanets[house]) housePlanets[house] = [];
+    housePlanets[house].push(p);
+  }
+
+  for (let i = 1; i <= 12; i++) {
+    const hPlanets = housePlanets[i] || [];
+    const baseX = housePositions[i - 1][0];
+    let baseY = housePositions[i - 1][1];
+    for (let p of hPlanets) {
+      const planetCircle = createSVGElement('circle');
+      planetCircle.setAttribute('cx', baseX);
+      planetCircle.setAttribute('cy', baseY);
+      planetCircle.setAttribute('r', 14);
+      planetCircle.setAttribute('fill', '#f4d03f');
+      planetCircle.setAttribute('stroke', 'black');
+      planetCircle.setAttribute('stroke-width', '1');
+      svg.appendChild(planetCircle);
+
+      const planetText = createSVGElement('text');
+      planetText.textContent = planetSymbols[p.name] || p.name.slice(0, 2);
+      planetText.setAttribute('x', baseX);
+      planetText.setAttribute('y', baseY + 5);
+      planetText.setAttribute('text-anchor', 'middle');
+      planetText.setAttribute('fill', 'black');
+      planetText.setAttribute('font-weight', '700');
+      planetText.setAttribute('font-size', '12');
+      svg.appendChild(planetText);
+
+      baseY += 30;
+    }
+  }
+}
+
+function analyzePlanets(planets, ascendant) {
+  let analysis = "Detailed Kundli Analysis:\n\n";
+  const signNames = SIGNS;
+
+  for (let p of planets) {
+    const house = longitudeToHouse(p.longitude, ascendant);
+    const signIndex = Math.floor(p.longitude / 30);
+    const sign = signNames[signIndex];
+    analysis += `${planetSymbols[p.name] || p.name}: In house ${house}, sign ${sign}.\n`;
+
+    // Simple good/bad eval example
+    if (sign === "Leo" && p.name === "Sun") analysis += "Sun is exalted here, indicating strong leadership.\n";
+    if (sign === "Aries" && p.name === "Mars") analysis += "Mars in Aries is very strong, lends courage.\n";
+    if (sign === "Pisces" && p.name === "Saturn") analysis += "Saturn in debilitation here, watch for challenges.\n";
+    // Add more rules as needed
+
+    analysis += "\n";
+  }
+
+  analysis += "Remedies for challenges:\n";
+  analysis += "- For debilitated planets, chanting specific mantras helps.\n";
+  analysis += "- Donating for related planetary energies can reduce negative effects.\n";
+  analysis += "- Wearing gemstones after expert consultation may enhance strength.\n";
+
+  return analysis;
+}
+
+document.getElementById('input-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const cityVal = e.target['city-select'].value;
+  if (!cityVal) {
+    alert("Please select a city.");
+    return;
+  }
+  const [latStr, lonStr] = cityVal.split(',');
+  const lat = parseFloat(latStr);
+  const lon = parseFloat(lonStr);
+  const dob = e.target.dob.value;
+  const tob = e.target['time-of-birth'].value;
+  if (!dob) {
+    alert("Please select Date of Birth.");
+    return;
+  }
+  if (!tob) {
+    alert("Please enter Time of Birth.");
+    return;
+  }
+  const [Y, M, D] = dob.split('-').map(Number);
+  const [h, m] = tob.split(':').map(Number);
+
+  // Compute Julian Day, planets, and ascendant
+  const JD = toJulianDay(Y, M, D, h, m);
+  const planets = getPlanetPositions(JD);
+  const ascendant = calculateAscendant(JD, lat, lon);
+
+  drawKundli(planets, ascendant);
+
+  const analysisText = analyzePlanets(planets, ascendant);
+  const analysisEl = document.getElementById('analysis');
+  analysisEl.textContent = analysisText;
+
+  document.getElementById('kundli-container').style.display = 'block';
+  analysisEl.focus();
+});
+
+document.getElementById('download-btn').addEventListener('click', () => {
+  const container = document.getElementById('kundli-container');
+  html2canvas(container).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'kundli_analysis.png';
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+});
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+</body>
+</html>
