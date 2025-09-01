@@ -3,146 +3,150 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Divine Path Kundli with Auto Geo</title>
+<title>Simple Kundli Generator</title>
 <style>
   body {
+    background: black;
+    color: #f4d03f;
     font-family: 'Poppins', sans-serif;
-    margin:0; background: #000;
-    color:#fdd835;
     padding: 20px;
-    user-select:none;
+    user-select: none;
   }
-  h1,h2 {
-    text-align:center;
-    color:#fdd835;
-    text-shadow: 0 0 15px #ffd635;
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px #f4d03f;
   }
   form {
     max-width: 600px;
-    margin: 0 auto 30px;
-    background:#222;
-    padding:20px;
+    margin: auto;
+    background: #111;
+    padding: 15px;
     border-radius: 12px;
-    box-shadow: 0 0 28px #ffaa00cc;
+    box-shadow: 0 0 40px #f4d03fbb;
   }
   label {
-    display:block;
-    margin-bottom:6px;
-    font-size:1.05rem;
-    font-weight:600;
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
   }
-  select, input[type=date], input[type=time],input[type=number], button {
-    width:100%;
-    padding:10px;
-    margin-bottom: 18px;
-    font-size:1rem;
-    border-radius:10px;
-    border:none;
-    box-shadow: inset 0 0 12px #ffb80088;
-    background:#111;
-    color:#fdd835;
+  select, input, button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    font-size: 1rem;
+    border-radius: 10px;
+    border: none;
+    background: #222;
+    color: #f4d03f;
+    box-shadow: inset 0 0 10px #f4d03f77;
   }
   button {
-    cursor:pointer;
-    font-weight:800;
-    background:#fdd835;
-    color:#000;
-    box-shadow: 0 0 30px #ffd635cc;
-    transition: background-color 0.3s ease;
+    cursor: pointer;
+    font-weight: 700;
+    background: #f4d03f;
+    color: black;
+    box-shadow: 0 0 20px #f4d03faa;
+    transition: background 0.3s ease;
   }
   button:hover {
-    background:#ffca28;
+    background: #dab51f;
   }
   #kundli-container {
-    max-width: 800px;
-    margin:30px auto 50px;
-    background:#111;
-    border-radius:16px;
-    box-shadow: 0 0 36px #ffd635cc;
-    padding: 20px;
+    max-width: 650px;
+    margin: 30px auto;
+    background: #111;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 60px #dab51fff;
   }
-  #kundli-svg {
-    display:block;
-    margin: 0 auto 20px auto;
+  svg {
+    display: block;
+    margin: auto;
     max-width: 600px;
-    width: 100%;
     height: 600px;
   }
-  #analysis {
-    white-space: pre-line;
-    font-size: 1.1rem;
-    line-height: 1.5;
-    color: #ffec80;
-  }
   .planet-circle {
-    fill: #fdd835;
-    stroke: #220;
-    stroke-width: 2;
-    cursor: pointer;
-    user-select:none;
-    transition: transform 0.3s ease, fill 0.3s ease;
+    fill: #f4d03f;
+    stroke: black;
+    stroke-width: 1;
+    transition: transform 0.3s ease;
   }
   .planet-circle:hover {
-    fill: #fff700;
+    fill: yellow;
     transform: scale(1.3);
+  }
+  text {
+    fill: black;
+    font-weight: 700;
+    font-size: 14px;
+    user-select: none;
+  }
+  #analysis {
+    margin-top: 20px;
+    white-space: pre-line;
+    color: #f7f7a1;
+    font-size: 1rem;
+    font-weight: 600;
   }
 </style>
 </head>
 <body>
 
-<h1>Divine Path Kundli</h1>
+<h1>Kundli Generator (Demo)</h1>
 <form id="kundli-form">
-  <label for="city">Select your city or choose Other</label>
-  <select id="city" name="city" required>
-    <option value="">--Select City--</option>
+  <label for="city-select">City (select or choose "Other")</label>
+  <select id="city-select" required>
+    <option value="">-- Select City --</option>
     <option value="28.7041,77.1025">Delhi</option>
     <option value="23.9941,85.3636">Hazaribagh</option>
     <option value="23.3441,85.3096">Ranchi</option>
     <option value="22.5726,88.3639">Kolkata</option>
-    <option value="other">Other (Use my Location)</option>
+    <option value="other">Other (Use device location)</option>
   </select>
-  <label for="latitude">Latitude (Auto-set if Other selected)</label>
-  <input type="number" step="0.0001" name="latitude" id="latitude" required readonly />
-  <label for="longitude">Longitude (Auto-set if Other selected)</label>
-  <input type="number" step="0.0001" name="longitude" id="longitude" required readonly />
+
+  <label for="latitude">Latitude</label>
+  <input type="number" id="latitude" step="0.0001" readonly required placeholder="Latitude will auto-fill for 'Other'" />
+
+  <label for="longitude">Longitude</label>
+  <input type="number" id="longitude" step="0.0001" readonly required placeholder="Longitude will auto-fill for 'Other'" />
+
   <label for="dob">Date of Birth</label>
-  <input type="date" name="dob" id="dob" required />
-  <label for="tob">Time of Birth (24h format)</label>
-  <input type="time" name="tob" id="tob" required value="12:00" step="60" />
+  <input type="date" id="dob" required/>
+
+  <label for="tob">Time of Birth (24h)</label>
+  <input type="time" id="tob" required value="12:00" step="60"/>
+
   <button type="submit">Generate Kundli</button>
 </form>
 
 <div id="kundli-container" style="display:none;">
-  <svg id="kundli-svg" role="img" aria-label="North Indian Kundli chart"></svg>
-  <pre id="analysis"></pre>
+  <svg id="kundli-svg" aria-label="Natal Kundli chart"></svg>
+  <div id="analysis"></div>
 </div>
 
 <script>
-  const citySelect = document.getElementById('city');
+  const citySelect = document.getElementById('city-select');
   const latInput = document.getElementById('latitude');
   const lonInput = document.getElementById('longitude');
-  const kundliForm = document.getElementById('kundli-form');
-  const kundliContainer = document.getElementById('kundli-container');
-  const kundliSVG = document.getElementById('kundli-svg');
-  const analysis = document.getElementById('analysis');
 
   citySelect.addEventListener('change', () => {
     if (citySelect.value === 'other') {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          latInput.value = pos.coords.latitude.toFixed(4);
-          lonInput.value = pos.coords.longitude.toFixed(4);
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(position => {
+          latInput.value = position.coords.latitude.toFixed(4);
+          lonInput.value = position.coords.longitude.toFixed(4);
           latInput.readOnly = true;
           lonInput.readOnly = true;
-        }, err => {
-          alert('Location permission denied or error. Please enter lat/lon manually.');
+        }, () => {
+          alert('Cannot access location. Please fill lat/lon manually.');
           latInput.readOnly = false;
           lonInput.readOnly = false;
           latInput.value = '';
           lonInput.value = '';
         });
       } else {
-        alert('Geolocation not supported. Please enter lat/lon manually.');
+        alert('Geolocation not supported.');
         latInput.readOnly = false;
         lonInput.readOnly = false;
       }
@@ -155,20 +159,17 @@
     }
   });
 
-  function createSVGElement(name) {
-    return document.createElementNS('http://www.w3.org/2000/svg', name);
+  function toJulianDay(y,m,d,h,min){
+    if(m <= 2){ y -= 1; m += 12;}
+    const A = Math.floor(y/100);
+    const B = 2 - A + Math.floor(A/4);
+    const dayFrac = (h + min/60)/24;
+    return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + d + dayFrac + B - 1524.5;
   }
 
-  // Repeat Astronomy functions here, similar to prior examples
-  function degToRad(d) { return d * Math.PI / 180; }
-  function radToDeg(r) { return r * 180 / Math.PI; }
-  function toJulianDay(y, m, d, h, min) {
-    if (m <= 2) { y -= 1; m += 12; }
-    const A = Math.floor(y / 100);
-    const B = 2 - A + Math.floor(A / 4);
-    const dayFrac = (h + min / 60) / 24;
-    return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + dayFrac + B - 1524.5;
-  }
+  function degToRad(deg) { return deg * Math.PI / 180; }
+  function radToDeg(rad) { return rad * 180 / Math.PI; }
+
   function sunLongitude(JD) {
     const n = JD - 2451545.0;
     const L = (280.460 + 0.9856474 * n) % 360;
@@ -176,6 +177,7 @@
     const gRad = degToRad(g);
     return (L + 1.915 * Math.sin(gRad) + 0.02 * Math.sin(2 * gRad) + 360) % 360;
   }
+
   function moonLongitude(JD) {
     const n = JD - 2451550.1;
     const L = (218.316 + 13.176396 * n) % 360;
@@ -185,33 +187,39 @@
     const MRad = degToRad(M);
     const FRad = degToRad(F);
     let lam = L + 6.289 * Math.sin(MRad) - 3.0 * Math.sin(LRad - degToRad(297.85))
-            + 1.274 * Math.sin(2 * degToRad(L) - MRad)
-            + 0.658 * Math.sin(2 * LRad)
-            + 0.214 * Math.sin(2 * MRad)
-            - 0.186 * Math.sin(degToRad(297.85))
-            + 0.114 * Math.sin(2 * FRad);
+               + 1.274 * Math.sin(2 * degToRad(L) - MRad)
+               + 0.658 * Math.sin(2 * LRad)
+               + 0.214 * Math.sin(2 * MRad)
+               - 0.186 * Math.sin(degToRad(297.85))
+               + 0.114 * Math.sin(2 * FRad);
     return (lam + 360) % 360;
   }
+
   function mercuryLongitude(JD) {
     const n = JD - 2451545.0;
     return (252.25084 + 4.0923344368 * n) % 360;
   }
+
   function venusLongitude(JD) {
     const n = JD - 2451545.0;
     return (181.9798 + 1.6021302244 * n) % 360;
   }
+
   function marsLongitude(JD) {
     const n = JD - 2451545.0;
     return (355.433 + 0.5240207766 * n) % 360;
   }
+
   function jupiterLongitude(JD) {
     const n = JD - 2451545.0;
     return (34.3515 + 0.083091 * n) % 360;
   }
+
   function saturnLongitude(JD) {
     const n = JD - 2451545.0;
     return (50.07745 + 0.0300657 * n) % 360;
   }
+
   function getPlanets(JD) {
     return [
       { name: 'Sun', longitude: sunLongitude(JD) },
@@ -223,6 +231,7 @@
       { name: 'Saturn', longitude: saturnLongitude(JD) }
     ];
   }
+
   function calculateAscendant(JD, lat, lon) {
     let GST = (function(JD) {
       const JD0 = Math.floor(JD + 0.5) - 0.5;
@@ -250,138 +259,124 @@
 
   function longitudeToHouse(lon, asc) {
     let diff = lon - asc;
-    if(diff < 0) diff += 360;
-    return Math.floor(diff/30) + 1;
+    if (diff < 0) diff += 360;
+    return Math.floor(diff / 30) + 1;
   }
 
-  function clearSVG() {
-    while(kundliSVG.firstChild) kundliSVG.removeChild(kundliSVG.firstChild);
-  }
+  const planetSymbols = {
+    Sun: 'Su', Moon: 'Mo', Mars: 'Ma', Mercury: 'Me',
+    Jupiter: 'Ju', Venus: 'Ve', Saturn: 'Sa',
+  };
 
   function drawKundli(planets, asc) {
-    clearSVG();
-    // Draw diamond
-    const diamond = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-    diamond.setAttribute('points','300,20 580,300 300,580 20,300');
-    diamond.setAttribute('stroke','#f4d03f');
-    diamond.setAttribute('stroke-width','3');
-    diamond.setAttribute('fill','none');
-    kundliSVG.appendChild(diamond);
+    const svg = document.getElementById('kundli-svg');
+    svg.innerHTML = ''; // Clear existing
 
-    // House label positions
+    // Diamond
+    const diamond = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    diamond.setAttribute('points', '300,20 580,300 300,580 20,300');
+    diamond.setAttribute('stroke', '#f4d03f');
+    diamond.setAttribute('stroke-width', '3');
+    diamond.setAttribute('fill', 'none');
+    svg.appendChild(diamond);
+
+    // House centers (x, y)
     const houseCenters = [
-      [300, 115], [410, 185], [470, 310], [410, 435],
-      [300, 505], [190, 435], [130, 310], [190, 185], [300, 300], [360, 235], [300, 175], [240, 235]
+      [300,110], [410,175], [470,310], [410,445],
+      [300,510], [190,445], [130,310], [190,175],
+      [300,300], [355,235], [300,170], [240,235]
     ];
 
     // Draw house numbers
-    for(let i=0; i<12; i++){
-      const num = document.createElementNS('http://www.w3.org/2000/svg','text');
-      num.textContent = (i+1);
-      num.setAttribute('x', houseCenters[i][0]);
-      num.setAttribute('y', houseCenters[i][1]-20);
-      num.setAttribute('fill','#f4d03f');
-      num.setAttribute('font-size','18');
-      num.setAttribute('text-anchor','middle');
-      num.setAttribute('font-weight','700');
-      kundliSVG.appendChild(num);
+    for (let i = 0; i < 12; i++) {
+      const houseText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      houseText.textContent = (i + 1);
+      houseText.setAttribute('x', houseCenters[i][0]);
+      houseText.setAttribute('y', houseCenters[i][1] - 20);
+      houseText.setAttribute('text-anchor', 'middle');
+      houseText.setAttribute('fill', '#f4d03f');
+      houseText.setAttribute('font-size', '18');
+      houseText.setAttribute('font-weight', '700');
+      svg.appendChild(houseText);
     }
 
     // Group planets by house
     const housePlanets = {};
-    planets.forEach(p=>{
+    planets.forEach(p => {
       const houseNum = longitudeToHouse(p.longitude, asc);
-      if(!housePlanets[houseNum]) housePlanets[houseNum] = [];
+      if (!housePlanets[houseNum]) housePlanets[houseNum] = [];
       housePlanets[houseNum].push(p);
     });
 
     // Place planets
-    for(let house=1; house<=12; house++){
+    for (let house = 1; house <= 12; house++) {
       let planetsInHouse = housePlanets[house] || [];
-      let baseX = houseCenters[house-1][0];
-      let baseY = houseCenters[house-1][1];
-      planetsInHouse.forEach((p, idx)=>{
-        // Circle
-        let circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        circ.setAttribute('cx', baseX);
-        circ.setAttribute('cy', baseY + idx*25);
-        circ.setAttribute('r',14);
-        circ.setAttribute('class','planet-circle');
-        kundliSVG.appendChild(circ);
+      let baseX = houseCenters[house - 1][0];
+      let baseY = houseCenters[house - 1][1];
+      planetsInHouse.forEach((p, idx) => {
+        let circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', baseX);
+        circle.setAttribute('cy', baseY + idx * 24);
+        circle.setAttribute('r', 12);
+        circle.setAttribute('class', 'planet-circle');
+        svg.appendChild(circle);
 
-        // Text
-        let txt = document.createElementNS('http://www.w3.org/2000/svg','text');
-        txt.textContent = planetSymbols[p.name] || p.name;
-        txt.setAttribute('x', baseX);
-        txt.setAttribute('y', baseY + idx*25 + 5);
-        txt.setAttribute('text-anchor', 'middle');
-        txt.setAttribute('fill', '#000');
-        txt.setAttribute('font-weight','700');
-        txt.setAttribute('font-size','12');
-        kundliSVG.appendChild(txt);
+        let text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.textContent = planetSymbols[p.name] || p.name.slice(0, 2);
+        text.setAttribute('x', baseX);
+        text.setAttribute('y', baseY + idx * 24 + 5);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', 'black');
+        text.setAttribute('font-size', '12');
+        text.setAttribute('font-weight', '700');
+        svg.appendChild(text);
       });
     }
   }
 
-  function analyzePlanets(planets, asc) {
-    let analysis = "Kundli Analysis:\n\n";
-    const goodConditions = [];
-    const badConditions = [];
-    const remedies = [];
+  function generateAnalysis(planets, asc) {
+    let out = 'Kundli Analysis:\n\n';
 
-    planets.forEach(p=>{
-      const houseNum = longitudeToHouse(p.longitude, asc);
-      const signIndex = Math.floor(p.longitude/30);
-      const sign = SIGNS[signIndex];
-      analysis += `${planetSymbols[p.name]||p.name} in house ${houseNum} and sign ${sign}\n`;
+    planets.forEach(p => {
+      const house = longitudeToHouse(p.longitude, asc);
+      const sign = SIGNS[Math.floor(p.longitude / 30)];
+      out += `${planetSymbols[p.name]||p.name}: House ${house}, Sign ${sign}\n`;
 
-      // Basic good example
-      if(p.name === 'Sun' && sign === 'Leo') goodConditions.push('Sun is exalted in Leo - strong authority and vitality.');
-      if(p.name === 'Moon' && sign === 'Cancer') goodConditions.push('Moon exalted in Cancer - emotional strength and intuition.');
-      if(p.name === 'Mars' && sign === 'Aries') goodConditions.push('Mars exalted in Aries - courage and energy.');
-      // Basic bad example
-      if(p.name === 'Saturn' && sign === 'Aries') { badConditions.push('Saturn debilitated in Aries'); remedies.push('Chant Shani mantra and avoid delays.'); }
-      if(p.name === 'Sun' && sign === 'Aquarius') { badConditions.push('Sun in debilitated Aquarius'); remedies.push('Wear Ruby and donate to the poor.'); }
+      // Example conditions
+      if (p.name === 'Sun' && sign === 'Leo')
+        out += '- Sun is exalted in Leo: Strong leadership and vitality.\n';
+      if (p.name === 'Moon' && sign === 'Cancer')
+        out += '- Moon exalted in Cancer: Emotional strength and intuition.\n';
+      if (p.name === 'Saturn' && sign === 'Aries')
+        out += '- Saturn debilitated in Aries: Challenges with discipline.\nRemedy: Chant Shani Mantra daily.\n';
     });
-
-    analysis += "\nGood Points:\n";
-    goodConditions.forEach(g=>analysis += "- " + g + "\n");
-
-    analysis += "\nChallenges:\n";
-    badConditions.forEach(b=>analysis += "- " + b + "\n");
-
-    analysis += "\nSuggested Remedies:\n";
-    remedies.forEach(r=>analysis += "- " + r + "\n");
-
-    return analysis;
+    return out;
   }
+
+  const SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 
   kundliForm.addEventListener('submit', e => {
     e.preventDefault();
-    if(!latInput.value || !lonInput.value || !kundliForm.dob.value || !kundliForm['time-of-birth'].value){
-      alert("Please fill all fields correctly.");
-      return;
-    }
-
     const lat = parseFloat(latInput.value);
     const lon = parseFloat(lonInput.value);
-    const [Y,M,D] = kundliForm.dob.value.split('-').map(Number);
-    const [h,m] = kundliForm['time-of-birth'].value.split(':').map(Number);
-    const JD = toJulianDay(Y, M, D, h, m);
+    const dob = document.getElementById('dob').value;
+    const tob = document.getElementById('tob').value;
+    if(!lat || !lon || !dob || !tob) {
+      alert('Please fill all fields');
+      return;
+    }
+    const [Y, M, D] = dob.split('-').map(Number);
+    const [h, m] = tob.split(':').map(Number);
 
+    const JD = toJulianDay(Y,M,D,h,m);
     const planets = getPlanets(JD);
     const asc = calculateAscendant(JD, lat, lon);
 
     drawKundli(planets, asc);
-    const analysisText = analyzePlanets(planets, asc);
-    analysis.textContent = analysisText;
+    analysis.textContent = generateAnalysis(planets, asc);
     kundliContainer.style.display = 'block';
-    kundliContainer.scrollIntoView({behavior:'smooth'});
   });
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 </body>
 </html>
-
